@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prueba Netlify + Google Sheets</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-xl mx-auto bg-white p-6 rounded-xl shadow">
+    <h1 class="text-2xl font-bold mb-4">Prueba Netlify → Google Sheets</h1>
+
+    <form id="comodatoForm" class="space-y-4">
+      <div>
+        <label class="block font-semibold mb-1">Fecha</label>
+        <input id="fecha" type="date" class="w-full border rounded p-2">
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-1">Técnico</label>
+        <input id="tecnico" type="text" class="w-full border rounded p-2">
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-1">Distribuidor</label>
+        <input id="distribuidor" type="text" class="w-full border rounded p-2">
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-1">Aclaración</label>
+        <input id="aclaracion" type="text" class="w-full border rounded p-2">
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-1">DNI</label>
+        <input id="dni" type="text" class="w-full border rounded p-2">
+      </div>
+
+      <button type="submit" class="w-full bg-blue-900 text-white py-3 rounded-lg font-bold">
+        Enviar
+      </button>
+    </form>
+  </div>
+
+  <script>
+    const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFcNsPIMtdUd19hsKHlhuyxLw_0vmXJ8zPnj87EyPqIDLyKkcpnQuoeVOsoLCl2nra/exec";
+
+    document.getElementById("comodatoForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const payload = {
+        fecha: document.getElementById("fecha").value,
+        tecnico: document.getElementById("tecnico").value,
+        distribuidor: document.getElementById("distribuidor").value,
+        aclaracion: document.getElementById("aclaracion").value,
+        dni: document.getElementById("dni").value
+      };
+
+      try {
+        const response = await fetch(APP_SCRIPT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.ok) {
+          alert("Guardado correctamente en Google Sheets");
+          document.getElementById("comodatoForm").reset();
+        } else {
+          alert("Error: " + result.message);
+        }
+      } catch (error) {
+        alert("Error de conexión: " + error.message);
+      }
+    });
+  </script>
+</body>
+</html>
